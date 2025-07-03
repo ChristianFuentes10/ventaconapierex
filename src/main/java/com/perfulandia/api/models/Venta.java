@@ -1,22 +1,27 @@
 package com.perfulandia.api.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
+import java.util.Date;
 
-@Entity
-@Table(name = "Ventas")
 @Data
-public class Venta 
-{
+@Entity
+@Table(name = "ventas")
+@NoArgsConstructor
+@AllArgsConstructor
+public class Venta {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String producto;
-    private int cantidad;
-    private double precioUnitario;
+    @Column(name = "id_venta")
+    private Integer idVenta;
 
+    @Column(name = "id_cliente")
+    private Integer idCliente;
+
+    @Column(name = "id_vendedor")
+    private Integer idVendedor;
+
+    @Column(name = "fecha_venta")
+    private Date fecha_venta;
 }

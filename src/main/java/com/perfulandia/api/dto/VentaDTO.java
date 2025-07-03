@@ -1,11 +1,17 @@
 package com.perfulandia.api.dto;
 
-import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
+import lombok.*;
+import java.util.Date;
 
 @Data
-public class VentaDTO {
-    private Long id;
-    private String producto;
-    private int cantidad;
-    private double precioUnitario;
+@NoArgsConstructor
+@AllArgsConstructor
+public class VentaDTO extends RepresentationModel<VentaDTO> {
+
+    private Integer id;
+    private Integer idCliente;
+    private Integer idVendedor;
+    private Date fechaVenta;
+
 }

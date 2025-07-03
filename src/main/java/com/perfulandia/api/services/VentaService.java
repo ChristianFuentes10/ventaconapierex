@@ -1,12 +1,12 @@
 package com.perfulandia.api.services;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import com.perfulandia.api.dto.VentaDTO;
 import com.perfulandia.api.models.Venta;
 import com.perfulandia.api.repositories.VentaRepository;
 
@@ -14,32 +14,55 @@ import com.perfulandia.api.repositories.VentaRepository;
 public class VentaService {
 
     @Autowired
-    VentaRepository repository; // Asumiendo que existe un repositorio para manejar las ventas
+    private VentaRepository ventaRepository;
 
-    public Venta guardar(Venta venta) {
-        // Lógica para guardar una venta
-        return null;
+    private VentaDTO toDTO(Venta venta){
+        return new VentaDTO(
+            venta.getIdVenta(),
+            venta.getIdCliente(),
+            venta.getIdVendedor(),
+            venta.getFecha_venta() // Usar el getter correcto según la entidad
+        );
     }
 
-    public List<Venta> listar() {
-        // Lógica para listar todas las ventas
-        return repository.findAll(); 
+    private Venta toEntity(VentaDTO dto) {
+        Venta venta = new Venta();
+        venta.setIdVenta(dto.getId());
+        venta.setIdCliente(dto.getIdCliente());
+        venta.setIdVendedor(dto.getIdVendedor());
+        venta.setFecha_venta(dto.getFechaVenta()); // Usar el setter correcto según la entidad
+        return venta;
     }
 
-    public Optional<Venta> obtenerPorId(Long id) {
-        // Lógica para obtener una venta por ID
-        return repository.findById(id);
-                
+    public VentaDTO crear(VentaDTO dto) {
+        Venta venta = toEntity(dto);
+        return toDTO(ventaRepository.save(venta));
     }
 
-    public Venta actualizar(Long id, Venta venta) {
-        // Lógica para actualizar una venta
-        return repository.save(venta);
-                
+    public List<VentaDTO> listar() {
+        return ventaRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public void  eliminar(Long id) {
-        // Lógica para eliminar una venta
-        return repository.deleteById(id);
+    public VentaDTO obtenerPorId(Integer id) {
+        Venta venta = ventaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+        return toDTO(venta);
+    }
+
+    public VentaDTO actualizar(Integer id, VentaDTO dto) {
+        Venta existente = ventaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+
+        existente.setIdCliente(dto.getIdCliente());
+        existente.setIdVendedor(dto.getIdVendedor());
+        existente.setFecha_venta(dto.getFechaVenta()); // Usar el setter correcto
+
+        return toDTO(ventaRepository.save(existente));
+    }
+
+    public void eliminar(Integer id) {
+        ventaRepository.deleteById(id);
     }
 }
